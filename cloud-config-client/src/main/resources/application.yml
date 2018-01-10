@@ -1,0 +1,12 @@
+logging:
+  level:
+    com:
+      uvanix:
+        cloud: debug
+    org:
+      springframework:
+        web: info
+
+management:
+  security:
+    enabled: false

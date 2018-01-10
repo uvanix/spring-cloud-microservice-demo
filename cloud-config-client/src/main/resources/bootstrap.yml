@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: cloud-config-client
+  cloud:
+    config:
+      uri: http://localhost:8888
+      name: cloud-config-client
+      username: user
+      password: password
+      # 默认值可省略
+      label: master
+      profile: default
+
+server:
+  port: ${random.int[8080,8088]}

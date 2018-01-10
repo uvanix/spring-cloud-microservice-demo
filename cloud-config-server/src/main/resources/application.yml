@@ -1,6 +1,6 @@
 spring:
   application:
-    name: 'cloud-config-server'
+    name: cloud-config-server
   cloud:
     config:
       server:
@@ -15,7 +15,7 @@ logging:
   level:
     com:
       uvanix:
-        cloud: 'debug'
+        cloud: debug
 
 security:
   user:
