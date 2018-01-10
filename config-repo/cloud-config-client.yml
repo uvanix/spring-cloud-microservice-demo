@@ -1,4 +1,1 @@
-server:
-  port: ${random.int[7080,7088]}
-
-word: 'hello'
+word: 'world'
