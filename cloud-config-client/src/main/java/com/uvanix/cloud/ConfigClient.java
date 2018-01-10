@@ -11,10 +11,10 @@ import org.springframework.core.env.Environment;
  * @date 2018/1/9
  */
 @SpringBootApplication
-public class Application {
+public class ConfigClient {
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(ConfigClient.class, args);
     }
 
     @Autowired

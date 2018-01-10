@@ -1,6 +1,6 @@
 package com.uvanix.cloud.web;
 
-import com.uvanix.cloud.ApplicationTest;
+import com.uvanix.cloud.ConfigClientTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 
 import static org.junit.Assert.*;
 
-public class HomeControllerTest extends ApplicationTest {
+public class HomeControllerTest extends ConfigClientTest {
 
     @Autowired
     private TestRestTemplate testRestTemplate;
