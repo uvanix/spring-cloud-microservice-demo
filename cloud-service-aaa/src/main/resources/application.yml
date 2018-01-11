@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: cloud-service-aaa
+
+server:
+  port: ${PORT:${SERVER_PORT:9001}}
+
+eureka:
+  client:
+    serviceUrl:
+      # 此处由于注册中心开启了认证所以需要改下地址
+      defaultZone: http://user:password@localhost:8761/eureka/
+
+logging:
+  level:
+    com:
+      uvanix: debug

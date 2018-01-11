@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: cloud-admin-monitor
+
+server:
+  port: ${PORT:${SERVER_PORT:7000}}
