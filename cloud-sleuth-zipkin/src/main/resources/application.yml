@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: cloud-sleuth-zipkin
+  profiles:
+    active: dev
+
+server:
+  port: ${PORT:${SERVER_PORT:8666}}

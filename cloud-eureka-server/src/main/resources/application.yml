@@ -13,8 +13,10 @@ eureka:
     # 关闭保护机制，以确保注册中心可以将不可用的实例剔除.
     # 注意：自我保护模式是一种应对网络异常的安全保护措施,使用自我保护模式，可以让Eureka集群更加的健壮、稳定
     enable-self-preservation: true
-    # #eureka server清理无效节点的时间间隔，默认60000毫秒，即60秒
+    # eureka server清理无效节点的时间间隔，默认60000毫秒，即60秒
     eviction-interval-timer-in-ms: 30000
+    # 设置同步为空时的等待时间。默认 5 * MINUTES
+    waitTimeInMsWhenSyncEmpty: 0
 
 security:
   user:
@@ -34,7 +36,7 @@ eureka:
     # 设置是否将自己作为客户端注册到注册中心（缺省true）
     register-with-eureka: false
     serviceUrl:
-      defaultZone: http://localhost:${server.port}/eureka/
+      defaultZone: http://${security.user.name}:${security.user.password}@localhost:${server.port}/eureka/
 
 ---
 spring:

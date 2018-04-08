@@ -17,8 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class PrintController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Registration registration;
+
     @Autowired
-    private Registration registration;
+    public PrintController(Registration registration) {
+        this.registration = registration;
+    }
 
     @GetMapping("/print")
     public String print(@RequestParam String message) {

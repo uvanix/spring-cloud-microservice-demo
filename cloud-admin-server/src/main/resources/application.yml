@@ -1,18 +1,17 @@
 spring:
   application:
-    name: cloud-service-bbb
+    name: cloud-admin-server
   profiles:
     active: dev
+  boot:
+    admin:
+      turbine:
+        location: http://localhost:8888/turbine.stream
 
 server:
-  port: ${PORT:${SERVER_PORT:9002}}
+  port: ${PORT:${SERVER_PORT:8555}}
 
 eureka:
   client:
     serviceUrl:
       defaultZone: http://user:password@localhost:8761/eureka/
-
-logging:
-  level:
-    com:
-      uvanix: debug

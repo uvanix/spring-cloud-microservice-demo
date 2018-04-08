@@ -1,0 +1,126 @@
+version: '3'
+
+services:
+  # mysql
+  mysql:
+    image: mysql:5.7.21
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./docker-mysql/share/:/share/"
+      - "./docker-mysql/db/:/docker-entrypoint-initdb.d/:ro"
+      - "./docker-mysql/master/lib/:/var/lib/mysql/"
+      - "./docker-mysql/master/log/:/var/log/mysql/"
+      - "./docker-mysql/master/conf.d/:/etc/mysql/mysql.conf.d/"
+      - "/usr/share/zoneinfo/Asia/Shanghai:/usr/share/zoneinfo/Asia/Shanghai:ro"
+    environment:
+      - TZ=Asia/Shanghai
+      - MYSQL_ROOT_PASSWORD=123456
+
+  # rabbitmq
+  rabbitmq:
+    image: rabbitmq:3.6.15-management
+    ports:
+       - "5671:5671"
+       - "5672:5672"
+       - "15672:15672"
+    hostname: uvanix-rabbit
+    volumes:
+       - "./docker-rabbitmq/share/:/opt/"
+    environment:
+       - TZ=Asia/Shanghai
+       - RABBITMQ_DEFAULT_USER=uvanix
+       - RABBITMQ_DEFAULT_PASS=123456
+       - RABBITMQ_DEFAULT_VHOST=uvanix
+
+  # 注册中心
+  cloud-eureka-server:
+    restart: always
+    build: ./cloud-eureka-server
+    working_dir: /app/cloud-eureka-server
+    volumes:
+      - ./app/cloud-eureka-server:/app/cloud-eureka-server
+      - ~/.m2:/root/.m2
+    expose:
+      - "8761"
+    command: mvn clean spring-boot:run -Dspring-boot.run.profiles=dev
+
+  # 服务aaa
+  cloud-service-aaa:
+    restart: always
+    build: ./cloud-service-aaa
+    working_dir: /app/cloud-service-aaa
+    volumes:
+      - ./app/cloud-service-aaa:/app/cloud-service-aaa
+      - ~/.m2:/root/.m2
+    expose:
+      - "9001"
+    depends_on:
+      - cloud-eureka-server
+    command: mvn clean spring-boot:run
+
+  # 服务bbb
+  cloud-service-bbb:
+    restart: always
+    build: ./cloud-service-aaa
+    working_dir: /app/cloud-service-aaa
+    volumes:
+      - ./app/cloud-service-aaa:/app/cloud-service-aaa
+      - ~/.m2:/root/.m2
+    expose:
+      - "9002"
+    depends_on:
+      - cloud-eureka-server
+    command: mvn clean spring-boot:run
+
+  # API网关
+  cloud-zuul-apigateway:
+    restart: always
+    build: ./cloud-zuul-apigateway
+    working_dir: /app/cloud-zuul-apigateway
+    volumes:
+      - ./app/cloud-zuul-apigateway:/app/cloud-zuul-apigateway
+      - ~/.m2:/root/.m2
+    expose:
+      - "8888"
+    depends_on:
+      - cloud-eureka-server
+    command: mvn clean spring-boot:run
+
+  # Hystrix Dashboard
+  cloud-hystrix-dashboard:
+    restart: always
+    build: ./cloud-hystrix-dashboard
+    working_dir: /app/cloud-hystrix-dashboard
+    volumes:
+      - ./app/cloud-hystrix-dashboard:/app/cloud-hystrix-dashboard
+      - ~/.m2:/root/.m2
+    expose:
+      - "8777"
+    depends_on:
+      - rabbitmq
+    command: mvn clean spring-boot:run
+
+  # Sleuth Zipkin
+  cloud-sleuth-zipkin:
+    restart: always
+    build: ./cloud-sleuth-zipkin
+    working_dir: /app/cloud-sleuth-zipkin
+    volumes:
+      - ./app/cloud-sleuth-zipkin:/app/cloud-sleuth-zipkin
+      - ~/.m2:/root/.m2
+    expose:
+      - "8666"
+    command: mvn clean spring-boot:run
+
+  # Admin Server
+  cloud-admin-server:
+    restart: always
+    build: ./cloud-admin-server
+    working_dir: /app/cloud-admin-server
+    volumes:
+      - ./app/cloud-admin-server:/app/cloud-admin-server
+      - ~/.m2:/root/.m2
+    expose:
+      - "8555"
+    command: mvn clean spring-boot:run

@@ -2,16 +2,18 @@ package com.uvanix.cloud;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import zipkin.server.EnableZipkinServer;
 
 /**
- * @author uvanix
- * @title 程序入口-admin监控
- * @date 2018/1/10
+ * @author uvans
+ * @title 程序入口 - Sleuth Zipkin
+ * @date 2018/4/8
  */
 @SpringBootApplication
-public class AdminMonitor {
+@EnableZipkinServer
+public class SletuhZipkin {
 
     public static void main(String[] args) {
-        SpringApplication.run(AdminMonitor.class, args);
+        SpringApplication.run(SletuhZipkin.class, args);
     }
 }

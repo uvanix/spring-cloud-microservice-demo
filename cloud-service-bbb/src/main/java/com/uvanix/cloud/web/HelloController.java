@@ -18,10 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Registration registration;
+    private final CloudServiceAaaClient cloudServiceAaaClient;
+
     @Autowired
-    private Registration registration;
-    @Autowired
-    private CloudServiceAaaClient cloudServiceAaaClient;
+    public HelloController(Registration registration,
+                           CloudServiceAaaClient cloudServiceAaaClient) {
+        this.registration = registration;
+        this.cloudServiceAaaClient = cloudServiceAaaClient;
+    }
 
     @GetMapping("/hello")
     public String hello(@RequestParam String message) {
