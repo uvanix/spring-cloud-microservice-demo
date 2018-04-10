@@ -1,67 +1,62 @@
-# 公共配置
 spring:
   application:
     name: cloud-eureka-server
   profiles:
-    active: dev
+    active: localhost
 
 server:
-  port: ${PORT:${SERVER_PORT:8761}}
-
-eureka:
-  server:
-    # 关闭保护机制，以确保注册中心可以将不可用的实例剔除.
-    # 注意：自我保护模式是一种应对网络异常的安全保护措施,使用自我保护模式，可以让Eureka集群更加的健壮、稳定
-    enable-self-preservation: true
-    # eureka server清理无效节点的时间间隔，默认60000毫秒，即60秒
-    eviction-interval-timer-in-ms: 30000
-    # 设置同步为空时的等待时间。默认 5 * MINUTES
-    waitTimeInMsWhenSyncEmpty: 0
+  port: ${PORT:8761}
 
 security:
   user:
     name: user
-    password: ${REGISTRY_SERVER_PASSWORD:password}
+    password: ${PASSWORD:password}
 
-# 用---分割不同的环境对应的配置信息（YML以"---"作为文档分割符，以"..."作为结束标志）
+# 单节点 use command to startup [ mvn spring-boot:run ]
 ---
 spring:
-  profiles: dev
-
+  profiles: localhost
 eureka:
+  instance:
+    hostname: ${spring.profiles}
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
   client:
     # 设置是否从注册中心获取注册信息（缺省true）
     # 因为这是一个单点的EurekaServer，不需要同步其它EurekaServer节点的数据，故设为false
     fetch-registry: false
     # 设置是否将自己作为客户端注册到注册中心（缺省true）
+    # 这里为不需要（查看@EnableEurekaServer注解的源码，会发现它间接用到了@EnableDiscoveryClient）
     register-with-eureka: false
     serviceUrl:
-      defaultZone: http://${security.user.name}:${security.user.password}@localhost:${server.port}/eureka/
+      defaultZone: http://${security.user.name}:${security.user.password}@${eureka.instance.hostname}:${server.port}/eureka/
 
+# 集群节点1 use command to startup [ mvn spring-boot:run -Drun.jvmArguments="-Dspring.profiles.active=peer1" ]
 ---
 spring:
-  profiles: node1
-
+  profiles: peer1
+server:
+  port: ${PORT:8001}
 eureka:
   instance:
-    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    hostname: ${spring.profiles}
     prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
   client:
-    fetch-registry: true
-    register-with-eureka: true
     serviceUrl:
-      defaultZone: http://localhost:${server.port:8761}/eureka/
+      defaultZone: http://${security.user.name}:${security.user.password}@peer2:8002/eureka/
 
+# 集群节点2 use command to startup [ mvn spring-boot:run -Drun.jvmArguments="-Dspring.profiles.active=peer2" ]
 ---
 spring:
-  profiles: node2
-
+  profiles: peer2
+server:
+  port: ${PORT:8002}
 eureka:
   instance:
-    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    hostname: ${spring.profiles}
     prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
   client:
-    fetch-registry: true
-    register-with-eureka: true
     serviceUrl:
-      defaultZone: http://localhost:${server.port:8761}/eureka/
+      defaultZone: http://${security.user.name}:${security.user.password}@peer1:8001/eureka/
