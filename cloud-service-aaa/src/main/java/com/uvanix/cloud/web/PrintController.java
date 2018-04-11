@@ -2,7 +2,6 @@ package com.uvanix.cloud.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +18,6 @@ public class PrintController {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Registration registration;
 
-    @Autowired
     public PrintController(Registration registration) {
         this.registration = registration;
     }

@@ -1,11 +1,9 @@
 spring:
   application:
     name: cloud-service-aaa
-  profiles:
-    active: dev
 
 server:
-  port: ${PORT:${SERVER_PORT:9001}}
+  port: ${PORT:9001}
 
 eureka:
   client:

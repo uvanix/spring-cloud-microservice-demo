@@ -7,7 +7,7 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 
 /**
  * @author uvanix
- * @title 程序入口-微服务bbb
+ * @title 程序入口 - 微服务bbb
  * @date 2017/12/26
  */
 @SpringBootApplication

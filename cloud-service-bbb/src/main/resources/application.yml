@@ -1,16 +1,18 @@
 spring:
   application:
     name: cloud-service-bbb
-  profiles:
-    active: dev
 
 server:
-  port: ${PORT:${SERVER_PORT:9002}}
+  port: ${PORT:9002}
 
 eureka:
   client:
     serviceUrl:
       defaultZone: http://user:password@localhost:8761/eureka/
+
+feign:
+  hystrix:
+    enabled: true
 
 logging:
   level:
