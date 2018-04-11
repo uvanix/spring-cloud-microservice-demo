@@ -7,7 +7,7 @@ import org.springframework.core.env.Environment;
 
 /**
  * @author uvanix
- * @title 程序入口-配置客户端
+ * @title 程序入口 - 配置客户端
  * @date 2018/1/9
  */
 @SpringBootApplication

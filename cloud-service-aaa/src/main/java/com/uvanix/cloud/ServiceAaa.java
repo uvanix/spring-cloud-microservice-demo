@@ -6,7 +6,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
  * @author uvanix
- * @title 程序入口-服务aaa
+` * @title 程序入口 - 服务aaa
  * @date 2017/12/26
  */
 @SpringBootApplication

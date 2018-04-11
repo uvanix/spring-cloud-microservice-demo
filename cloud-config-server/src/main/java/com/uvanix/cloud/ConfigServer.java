@@ -6,7 +6,7 @@ import org.springframework.cloud.config.server.EnableConfigServer;
 
 /**
  * @author uvanix
- * @title 程序入口-配置服务
+ * @title 程序入口 - config server
  * @date 2018/1/8
  */
 @SpringBootApplication

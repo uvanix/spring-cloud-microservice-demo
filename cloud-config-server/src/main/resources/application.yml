@@ -9,15 +9,9 @@ spring:
           search-paths: config-repo
 
 server:
-  port: ${PORT:${SERVER_PORT:8888}}
-
-logging:
-  level:
-    com:
-      uvanix:
-        cloud: debug
+  port: ${PORT:${SERVER_PORT:9999}}
 
 security:
   user:
     name: user
-    password: ${REGISTRY_SERVER_PASSWORD:password}
+    password: ${PASSWORD:password}

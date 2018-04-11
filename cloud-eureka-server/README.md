@@ -1,4 +1,4 @@
-## 注册中心Eureka
+## 注册中心 Eureka Server
 ### 简介
 Eureka 是 Netflix 开发的，一个基于 REST 服务的，服务注册与发现的组件
 它主要包括两个组件：Eureka Server 和 Eureka Client
