@@ -76,8 +76,6 @@ eureka:
     health-check-url-path: http://${spring.cloud.client.ipAddress}:${server.port}${management.context-path}${endpoints.info.path:/health}
     metadata-map:
       management.context-path: ${management.context-path}
-      user.name: ${security.user.name}
-      user.password: ${security.user.password}
     leaseRenewalIntervalInSeconds: 5
     lease-expiration-duration-in-seconds: 15
   client:
