@@ -40,7 +40,7 @@ public class EurekaServerTest {
     @Test
     public void health() {
         ResponseEntity<Map> entity = testRestTemplate.withBasicAuth(username, password)
-                .getForEntity("/health", Map.class);
+                .getForEntity("/mgmt/health", Map.class);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         logger.info("\nresult: {}", entity.getBody());
     }

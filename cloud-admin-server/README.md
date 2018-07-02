@@ -1,1 +1,5 @@
-## Spring Boot Admin Server
+## Admin Server 应用监控
+
+### 简介
+SpringBoot Admin Server提供SpringBoot应用的管理功能监控，同时提供spring-boot-admin-server-ui-turbine
+用来整合hystrix和turbine

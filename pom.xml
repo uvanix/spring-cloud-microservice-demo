@@ -12,12 +12,11 @@
         <module>cloud-eureka-server</module>
         <module>cloud-service-aaa</module>
         <module>cloud-service-bbb</module>
+        <module>cloud-zuul-gateway</module>
+        <module>cloud-admin-server</module>
+        <module>cloud-zipkin-server</module>
         <module>cloud-config-server</module>
         <module>cloud-config-client</module>
-        <module>cloud-zuul-apigateway</module>
-        <module>cloud-sleuth-zipkin</module>
-        <module>cloud-hystrix-dashboard</module>
-        <module>cloud-admin-server</module>
     </modules>
 
     <name>spring-cloud-microservice-demo</name>

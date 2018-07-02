@@ -6,7 +6,7 @@
     <packaging>jar</packaging>
 
     <name>cloud-eureka-server</name>
-    <description>eureka server注册中心</description>
+    <description>eureka server 注册中心</description>
 
     <parent>
         <artifactId>spring-cloud-microservice-demo</artifactId>
@@ -16,8 +16,16 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jolokia</groupId>
+            <artifactId>jolokia-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -6,7 +6,7 @@
     <packaging>jar</packaging>
 
     <name>cloud-config-server</name>
-    <description>config server</description>
+    <description>config server 配置中心</description>
 
     <parent>
         <artifactId>spring-cloud-microservice-demo</artifactId>
@@ -18,6 +18,10 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-config-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

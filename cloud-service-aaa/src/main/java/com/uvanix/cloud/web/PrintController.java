@@ -22,9 +22,10 @@ public class PrintController {
         this.registration = registration;
     }
 
+
     @GetMapping("/print")
     public String print(@RequestParam String message) {
-        logger.info("\n/print, host: {}, port: {}, service_id: {}, result: {}",
+        logger.info("/print, host: {}, port: {}, service_id: {}, result: {}",
                 registration.getHost(), registration.getPort(), registration.getServiceId(), message);
 
         return message;

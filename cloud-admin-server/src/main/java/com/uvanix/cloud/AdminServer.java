@@ -3,14 +3,18 @@ package com.uvanix.cloud;
 import de.codecentric.boot.admin.config.EnableAdminServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.netflix.turbine.EnableTurbine;
 
 /**
- * @author uvans
+ * @author uvanix
  * @title 程序入口 - Admin Server
  * @date 2018/4/8
  */
 @SpringBootApplication
 @EnableAdminServer
+@EnableEurekaClient
+@EnableTurbine
 public class AdminServer {
 
     public static void main(String[] args) {

@@ -3,6 +3,7 @@ package com.uvanix.cloud;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.core.env.Environment;
 
 /**
@@ -11,6 +12,7 @@ import org.springframework.core.env.Environment;
  * @date 2018/1/9
  */
 @SpringBootApplication
+@EnableEurekaClient
 public class ConfigClient {
 
     public static void main(String[] args) {

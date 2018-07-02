@@ -1,1 +1,1 @@
-## Config Server
+## 配置中心 Config Server

@@ -54,7 +54,7 @@ services:
       - ./app/cloud-service-aaa:/app/cloud-service-aaa
       - ~/.m2:/root/.m2
     expose:
-      - "9001"
+      - "7001"
     depends_on:
       - cloud-eureka-server
     command: mvn clean spring-boot:run
@@ -68,7 +68,7 @@ services:
       - ./app/cloud-service-aaa:/app/cloud-service-aaa
       - ~/.m2:/root/.m2
     expose:
-      - "9002"
+      - "7002"
     depends_on:
       - cloud-eureka-server
     command: mvn clean spring-boot:run
@@ -76,7 +76,7 @@ services:
   # API网关
   cloud-zuul-apigateway:
     restart: always
-    build: ./cloud-zuul-apigateway
+    build: cloud-zuul-gateway
     working_dir: /app/cloud-zuul-apigateway
     volumes:
       - ./app/cloud-zuul-apigateway:/app/cloud-zuul-apigateway
@@ -85,32 +85,6 @@ services:
       - "8888"
     depends_on:
       - cloud-eureka-server
-    command: mvn clean spring-boot:run
-
-  # Hystrix Dashboard
-  cloud-hystrix-dashboard:
-    restart: always
-    build: ./cloud-hystrix-dashboard
-    working_dir: /app/cloud-hystrix-dashboard
-    volumes:
-      - ./app/cloud-hystrix-dashboard:/app/cloud-hystrix-dashboard
-      - ~/.m2:/root/.m2
-    expose:
-      - "8777"
-    depends_on:
-      - rabbitmq
-    command: mvn clean spring-boot:run
-
-  # Sleuth Zipkin
-  cloud-sleuth-zipkin:
-    restart: always
-    build: ./cloud-sleuth-zipkin
-    working_dir: /app/cloud-sleuth-zipkin
-    volumes:
-      - ./app/cloud-sleuth-zipkin:/app/cloud-sleuth-zipkin
-      - ~/.m2:/root/.m2
-    expose:
-      - "8666"
     command: mvn clean spring-boot:run
 
   # Admin Server
@@ -122,5 +96,17 @@ services:
       - ./app/cloud-admin-server:/app/cloud-admin-server
       - ~/.m2:/root/.m2
     expose:
-      - "8555"
+      - "9410"
+    command: mvn clean spring-boot:run
+
+  # Sleuth Zipkin
+  cloud-sleuth-zipkin:
+    restart: always
+    build: ./cloud-sleuth-zipkin
+    working_dir: /app/cloud-sleuth-zipkin
+    volumes:
+      - ./app/cloud-sleuth-zipkin:/app/cloud-sleuth-zipkin
+      - ~/.m2:/root/.m2
+    expose:
+      - "9411"
     command: mvn clean spring-boot:run

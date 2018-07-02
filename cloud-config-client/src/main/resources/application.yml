@@ -1,4 +1,6 @@
 logging:
+  config: classpath:config/logback-config.xml
+  file: logs/cloud-config-client.log
   level:
     com:
       uvanix:
@@ -6,7 +8,36 @@ logging:
     org:
       springframework:
         web: info
-
 management:
   security:
     enabled: false
+  context-path: /mgmt
+info:
+  app:
+    name: "@project.name@"
+    description: "@project.description@"
+    version: "@project.version@"
+
+# 开发环境 use command to startup [ nohup mvn clean spring-boot:run > /dev/null 2>&1 & ]
+---
+spring:
+  profiles: dev
+eureka:
+  instance:
+    hostname: ${spring.application.name}
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    status-page-url: http://${spring.cloud.client.ipAddress}:${server.port}${management.context-path}${endpoints.info.path:/info}
+    health-check-url-path: http://${spring.cloud.client.ipAddress}:${server.port}${management.context-path}${endpoints.info.path:/health}
+    metadata-map:
+      management.context-path: ${management.context-path}
+      user.name: ${security.user.name}
+      user.password: ${security.user.password}
+    leaseRenewalIntervalInSeconds: 5
+    lease-expiration-duration-in-seconds: 15
+  client:
+    health:
+      enabled: true
+    serviceUrl:
+      defaultZone: http://user:password@localhost:8761/eureka/
+    registryFetchIntervalSeconds: 5
