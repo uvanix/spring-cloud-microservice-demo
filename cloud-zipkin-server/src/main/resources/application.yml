@@ -63,3 +63,16 @@ eureka:
     serviceUrl:
       defaultZone: http://user:password@localhost:8761/eureka/
     registryFetchIntervalSeconds: 5
+#zipkin:
+#  self-tracing:
+#    enabled: false
+#  storage:
+#    type: elasticsearch
+#    StorageComponent: elasticsearch
+#    elasticsearch:
+#      hosts: localhost:9300
+#      cluster: es-cluster
+#      max-requests: 64
+#      index: zipkin
+#      index-shards: 5
+#      index-replicas: 1
