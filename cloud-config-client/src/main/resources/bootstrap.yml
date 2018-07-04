@@ -1,21 +1,64 @@
 spring:
   application:
     name: cloud-config-client
+  profiles:
+    active: dev
   cloud:
     config:
-      uri: http://localhost:8666
-      name: cloud-config-client
-      username: user
-      password: password
+      enabled: false
+      # 配置从注册中心找配置中心地址
+      discovery:
+        enabled: false
+        service-id: cloud-config-server
       # 默认值可省略
       label: master
       profile: default
-
 server:
-  port: ${random.int[7777,7888]}
+  port: ${PORT:7000}
   session:
     timeout: 60
   tomcat:
     max-threads: 800
     uri-encoding: UTF-8
     basedir: logs
+logging:
+  config: classpath:config/logback-config.xml
+  file: logs/cloud-config-client.log
+  level:
+    com:
+      uvanix:
+        cloud: debug
+    org:
+      springframework:
+        web: info
+management:
+  security:
+    enabled: false
+  context-path: /mgmt
+info:
+  app:
+    name: "@project.name@"
+    description: "@project.description@"
+    version: "@project.version@"
+
+# 开发环境 use command to startup [ nohup mvn clean spring-boot:run > /dev/null 2>&1 & ]
+---
+spring:
+  profiles: dev
+eureka:
+  instance:
+    hostname: ${spring.application.name}
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    status-page-url: http://${spring.cloud.client.ipAddress}:${server.port}${management.context-path}${endpoints.info.path:/info}
+    health-check-url-path: http://${spring.cloud.client.ipAddress}:${server.port}${management.context-path}${endpoints.info.path:/health}
+    metadata-map:
+       management.context-path: ${management.context-path}
+    leaseRenewalIntervalInSeconds: 5
+    lease-expiration-duration-in-seconds: 15
+  client:
+    health:
+      enabled: true
+    serviceUrl:
+      defaultZone: http://user:password@localhost:8761/eureka/
+    registryFetchIntervalSeconds: 5

@@ -23,7 +23,7 @@ public class HomeControllerTest extends ConfigClientTest {
 
     @Test
     public void refresh() {
-        ResponseEntity<String> entity = testRestTemplate.postForEntity("/refresh", null, String.class);
+        ResponseEntity<String> entity = testRestTemplate.postForEntity("/mgmt/refresh", null, String.class);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         logger.info("\nresult: {}", entity.getBody());
     }

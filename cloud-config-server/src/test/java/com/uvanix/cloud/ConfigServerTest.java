@@ -32,14 +32,14 @@ public class ConfigServerTest {
 
     @Test
     public void home() {
-        ResponseEntity<String> entity = testRestTemplate.withBasicAuth(username, password)
+        ResponseEntity<String> entity = testRestTemplate
                 .getForEntity("/", String.class);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
     }
 
     @Test
     public void health() {
-        ResponseEntity<Map> entity = testRestTemplate.withBasicAuth(username, password)
+        ResponseEntity<Map> entity = testRestTemplate
                 .getForEntity("/mgmt/health", Map.class);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         logger.info("\nresult: {}", entity.getBody());
@@ -47,7 +47,7 @@ public class ConfigServerTest {
 
     @Test
     public void configurationAvailable() {
-        ResponseEntity<String> entity = testRestTemplate.withBasicAuth(username, password)
+        ResponseEntity<String> entity = testRestTemplate
                 .getForEntity("/config-default.yml", String.class);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
     }
