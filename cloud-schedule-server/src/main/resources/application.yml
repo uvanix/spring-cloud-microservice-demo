@@ -1,0 +1,92 @@
+spring:
+  application:
+    name: cloud-schedule-server
+  profiles:
+    active: dev
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  cloud:
+    inetutils:
+      use-only-site-local-interfaces: true
+server:
+  port: ${PORT:9412}
+  session:
+    timeout: 60
+  tomcat:
+    max-threads: 800
+    uri-encoding: UTF-8
+    basedir: logs
+logging:
+  config: classpath:config/logback-config.xml
+  file: logs/cloud-schedule-server.log
+  level:
+    org:
+      springframework:
+        transaction: debug
+      mybatis: debug
+    com:
+      uvanix:
+        cloud: debug
+management:
+  security:
+    enabled: false
+  context-path: /mgmt
+info:
+  app:
+    name: "@project.name@"
+    description: "@project.description@"
+    version: "@project.version@"
+mybatis:
+  type-aliases-package: com.uvanix.cloud.dao.entity
+  mapper-locations: classpath*:com/uvanix/cloud/dao/schema/**/*.xml
+  configuration:
+    lazy-loading-enabled: true
+    use-generated-keys: true
+    default-executor-type: reuse
+    default-statement-timeout: 30
+    map-underscore-to-camel-case: true
+    auto-mapping-behavior: full
+pagehelper:
+  helper-dialect: mysql
+  reasonable: false
+  support-methods-arguments: true
+  params: count=countSql
+
+# 开发环境 use command to startup [ nohup mvn clean spring-boot:run > /dev/null 2>&1 & ]
+---
+spring:
+  profiles: dev
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/schedule_quartz?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull&amp;tinyInt1isBit=false&amp;useSSL=false
+    username: root
+    password: 123456
+    hikari:
+      connection-test-query: select 'x'
+      connection-timeout: 60000
+      idle-timeout: 10000
+      max-lifetime: 60000
+      minimum-idle: 5
+      maximum-pool-size: 10
+eureka:
+  instance:
+    hostname: ${spring.application.name}
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    status-page-url: http://${spring.cloud.client.ipAddress}:${server.port}${management.context-path}${endpoints.info.path:/info}
+    health-check-url-path: http://${spring.cloud.client.ipAddress}:${server.port}${management.context-path}${endpoints.info.path:/health}
+    metadata-map:
+      management.context-path: ${management.context-path}
+      user.name: ${security.user.name}
+      user.password: ${security.user.password}
+    leaseRenewalIntervalInSeconds: 5
+    lease-expiration-duration-in-seconds: 15
+  client:
+    health:
+      enabled: true
+    serviceUrl:
+      defaultZone: http://user:password@localhost:8761/eureka/
+    registryFetchIntervalSeconds: 5

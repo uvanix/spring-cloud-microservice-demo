@@ -17,6 +17,8 @@
         <module>cloud-zipkin-server</module>
         <module>cloud-config-server</module>
         <module>cloud-config-client</module>
+        <module>cloud-schedule-server</module>
+        <module>cloud-service-task</module>
     </modules>
 
     <name>spring-cloud-microservice-demo</name>
