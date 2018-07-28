@@ -1,0 +1,149 @@
+version: "3.6"
+
+services:
+  pinpoint-zookeeper:
+    container_name: "${PINPOINT_ZOOKEEPER_NAME}"
+    image: zookeeper
+    restart: always
+    ports:
+      - "${ZOOKEEPER_PORT:-2181}:2181"
+    networks:
+      - pinpoint
+
+  pinpoint-hbase:
+    build:
+      context: ./pinpoint-hbase/
+      dockerfile: Dockerfile
+      args:
+        - PINPOINT_VERSION=${PINPOINT_VERSION}
+    container_name: "${PINPOINT_HBASE_NAME}"
+    image: "pinpointdocker/pinpoint-hbase:${PINPOINT_VERSION}"
+    restart: always
+    volumes:
+      - ./home/pinpoint/hbase
+      - ./home/pinpoint/zookeeper
+    expose:
+      # zookeeper
+      - "${ZOOKEEPER_PORT:-2181}"
+      # HBase Master API port
+      - "60000"
+      # HBase Master Web UI
+      - "16010"
+      # Regionserver API port
+      - "60020"
+      # HBase Regionserver web UI
+      - "16030"
+    ports:
+      - "${HBASE_PORT:-2181}:2181"
+      - "60000:60000"
+      - "16010:16010"
+      - "60020:60020"
+      - "16030:16030"
+    networks:
+      - pinpoint
+
+  pinpoint-collector:
+    build:
+      context: ./pinpoint-collector/
+      dockerfile: Dockerfile
+      args:
+        - PINPOINT_VERSION=${PINPOINT_VERSION}
+    container_name: "${PINPOINT_COLLECTOR_NAME}"
+    image: "pinpointdocker/pinpoint-collector:${PINPOINT_VERSION}"
+    restart: always
+    depends_on:
+      - pinpoint-hbase
+    expose:
+      - "${COLLECTOR_TCP_PORT:-9994}"
+      - "${COLLECTOR_STAT_PORT:-9995}"
+      - "${COLLECTOR_SPAN_PORT:-9996}"
+    ports:
+      - "${COLLECTOR_TCP_PORT:-9994}:9994"
+      - "${COLLECTOR_STAT_PORT:-9995}:9995/tcp"
+      - "${COLLECTOR_SPAN_PORT:-9996}:9996/tcp"
+      - "${COLLECTOR_STAT_PORT:-9995}:9995/udp"
+      - "${COLLECTOR_SPAN_PORT:-9996}:9996/udp"
+    networks:
+      - pinpoint
+    environment:
+      - CLUSTER_ENABLE=${ZOOKEEPER_CLUSTER_ENABLE}
+      - CLUSTER_ZOOKEEPER_ADDRESS=${PINPOINT_ZOOKEEPER_NAME}
+      - HBASE_HOST=${PINPOINT_HBASE_NAME}
+      - HBASE_PORT=${HBASE_PORT}
+      - DEBUG_LEVEL=${COLLECTOR_DEBUG_LEVEL}
+
+  pinpoint-web:
+    build:
+      context: ./pinpoint-web/
+      dockerfile: Dockerfile
+      args:
+        - PINPOINT_VERSION=${PINPOINT_VERSION}
+    container_name: "${PINPOINT_WEB_NAME}"
+    image: "pinpointdocker/pinpoint-web:${PINPOINT_VERSION}"
+    restart: always
+    depends_on:
+      - pinpoint-hbase
+    expose:
+      - "8080"
+      - "9997"
+    ports:
+      - "9997:9997"
+      - "${WEB_PAGE_PORT:-8080}:8080"
+    networks:
+      - pinpoint
+    environment:
+      - CLUSTER_ENABLE=${ZOOKEEPER_CLUSTER_ENABLE}
+      - CLUSTER_ZOOKEEPER_ADDRESS=${PINPOINT_ZOOKEEPER_NAME}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - ANALYTICS=${ANALYTICS}
+      - HBASE_HOST=${PINPOINT_HBASE_NAME}
+      - HBASE_PORT=${HBASE_PORT}
+      - DEBUG_LEVEL=${WEB_DEBUG_LEVEL}
+      - CONFIG_SHOW_APPLICATIONSTAT=${CONFIG_SHOW_APPLICATIONSTAT}
+
+  pinpoint-agent:
+    build:
+      context: ./pinpoint-agent/
+      dockerfile: Dockerfile
+      args:
+        - PINPOINT_VERSION=${PINPOINT_VERSION}
+    container_name: "${PINPOINT_AGENT_NAME}"
+    image: "pinpointdocker/pinpoint-agent:${PINPOINT_VERSION}"
+    restart: unless-stopped
+    depends_on:
+      - pinpoint-collector
+    volumes:
+      - data-volume:/pinpoint-agent
+    networks:
+      - pinpoint
+    environment:
+      - COLLECTOR_IP=${PINPOINT_COLLECTOR_NAME}
+      - COLLECTOR_TCP_PORT=${COLLECTOR_TCP_PORT}
+      - COLLECTOR_STAT_PORT=${COLLECTOR_STAT_PORT}
+      - COLLECTOR_SPAN_PORT=${COLLECTOR_SPAN_PORT}
+      - PROFILER_SAMPLING_RATE=${PROFILER_SAMPLING_RATE}
+      - DEBUG_LEVEL=${AGENT_DEBUG_LEVEL}
+
+  pinpoint-quickstart:
+    build:
+      context: ./pinpoint-quickstart/
+      dockerfile: Dockerfile
+    container_name: "pinpoint-quickstart"
+    image: "pinpointdocker/pinpoint-quickstart"
+    depends_on:
+      - pinpoint-agent
+    volumes:
+      - data-volume:/pinpoint-agent
+    networks:
+      - pinpoint
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    environment:
+      JAVA_OPTS: "-javaagent:/pinpoint-agent/pinpoint-bootstrap-${PINPOINT_VERSION}.jar -Dpinpoint.agentId=${AGENT_ID} -Dpinpoint.applicationName=${APP_NAME}"
+
+volumes:
+  data-volume:
+
+networks:
+  pinpoint:
+    driver: bridge
