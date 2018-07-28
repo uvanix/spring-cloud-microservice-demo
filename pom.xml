@@ -19,6 +19,8 @@
         <module>cloud-config-client</module>
         <module>cloud-schedule-server</module>
         <module>cloud-service-task</module>
+        <module>cloud-service-consul</module>
+        <module>cloud-service-zookeeper</module>
     </modules>
 
     <name>spring-cloud-microservice-demo</name>

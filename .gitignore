@@ -27,3 +27,7 @@ nbdist/
 logs/
 
 .DS_Store
+
+cloud-docker-infrastructure/zookeeper/conf
+cloud-docker-infrastructure/zookeeper/data
+cloud-docker-infrastructure/zookeeper/logs
