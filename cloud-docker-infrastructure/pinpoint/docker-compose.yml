@@ -4,7 +4,6 @@ services:
   pinpoint-zookeeper:
     container_name: "${PINPOINT_ZOOKEEPER_NAME}"
     image: zookeeper
-    restart: always
     ports:
       - "${ZOOKEEPER_PORT:-2181}:2181"
     networks:
@@ -18,7 +17,6 @@ services:
         - PINPOINT_VERSION=${PINPOINT_VERSION}
     container_name: "${PINPOINT_HBASE_NAME}"
     image: "pinpointdocker/pinpoint-hbase:${PINPOINT_VERSION}"
-    restart: always
     volumes:
       - ./home/pinpoint/hbase
       - ./home/pinpoint/zookeeper
@@ -50,7 +48,6 @@ services:
         - PINPOINT_VERSION=${PINPOINT_VERSION}
     container_name: "${PINPOINT_COLLECTOR_NAME}"
     image: "pinpointdocker/pinpoint-collector:${PINPOINT_VERSION}"
-    restart: always
     depends_on:
       - pinpoint-hbase
     expose:
@@ -80,7 +77,6 @@ services:
         - PINPOINT_VERSION=${PINPOINT_VERSION}
     container_name: "${PINPOINT_WEB_NAME}"
     image: "pinpointdocker/pinpoint-web:${PINPOINT_VERSION}"
-    restart: always
     depends_on:
       - pinpoint-hbase
     expose:
@@ -109,7 +105,7 @@ services:
         - PINPOINT_VERSION=${PINPOINT_VERSION}
     container_name: "${PINPOINT_AGENT_NAME}"
     image: "pinpointdocker/pinpoint-agent:${PINPOINT_VERSION}"
-    restart: unless-stopped
+#    restart: unless-stopped
     depends_on:
       - pinpoint-collector
     volumes:
