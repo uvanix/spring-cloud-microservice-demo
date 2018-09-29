@@ -35,7 +35,7 @@ public class ZuulGatewayTest {
     @Test
     public void health() {
         ResponseEntity<Map> entity = testRestTemplate
-                .getForEntity("/mgmt/health", Map.class);
+                .getForEntity("/actuator/health", Map.class);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         logger.info("\nresult: {}", entity.getBody());
     }

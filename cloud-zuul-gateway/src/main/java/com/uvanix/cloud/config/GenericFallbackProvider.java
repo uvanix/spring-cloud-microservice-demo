@@ -23,36 +23,15 @@ public class GenericFallbackProvider implements FallbackProvider {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
-    public ClientHttpResponse fallbackResponse(Throwable cause) {
-        logger.error(cause.getMessage(), cause);
-        return callback();
-    }
-
-    @Override
     public String getRoute() {
         return "*";
     }
 
     @Override
-    public ClientHttpResponse fallbackResponse() {
-        return callback();
-    }
+    public ClientHttpResponse fallbackResponse(String route, Throwable cause) {
+        logger.error(cause.getMessage(), cause);
 
-    private ClientHttpResponse callback() {
         return new ClientHttpResponse() {
-
-            @Override
-            public HttpHeaders getHeaders() {
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-                return headers;
-            }
-
-            @Override
-            public InputStream getBody() throws IOException {
-                return new ByteArrayInputStream("服务器开小差了，请稍后再试!".getBytes("UTF-8"));
-            }
-
             @Override
             public HttpStatus getStatusCode() throws IOException {
                 return HttpStatus.OK;
@@ -71,6 +50,18 @@ public class GenericFallbackProvider implements FallbackProvider {
             @Override
             public void close() {
 
+            }
+
+            @Override
+            public InputStream getBody() throws IOException {
+                return new ByteArrayInputStream("fallback".getBytes());
+            }
+
+            @Override
+            public HttpHeaders getHeaders() {
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                return headers;
             }
         };
     }

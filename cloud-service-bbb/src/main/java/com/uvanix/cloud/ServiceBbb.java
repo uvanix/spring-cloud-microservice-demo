@@ -1,8 +1,9 @@
 package com.uvanix.cloud;
 
+import feign.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
-import org.springframework.cloud.netflix.feign.EnableFeignClients;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 
 /**
@@ -25,6 +26,6 @@ public class ServiceBbb {
      */
     @Bean
     public feign.Logger.Level feignLoggerLevel() {
-        return feign.Logger.Level.FULL;
+        return Logger.Level.NONE;
     }
 }

@@ -2,9 +2,11 @@ package com.uvanix.cloud.filter;
 
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,9 +16,9 @@ import javax.servlet.http.HttpServletRequest;
  * @date 2018/4/8
  */
 @Component
-public class AccessFilter extends ZuulFilter {
+public class RequestAccessPreFilter extends ZuulFilter {
 
-    private final Logger logger = LoggerFactory.getLogger(AccessFilter.class);
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public String filterType() {
@@ -25,29 +27,30 @@ public class AccessFilter extends ZuulFilter {
 
     @Override
     public int filterOrder() {
-        return 6;
+        return 7;
     }
 
     @Override
     public boolean shouldFilter() {
-        return true;
+        return RequestContext.getCurrentContext().getBoolean("shouldFilter");
     }
 
     @Override
     public Object run() {
         RequestContext ctx = RequestContext.getCurrentContext();
-        HttpServletRequest request = ctx.getRequest();
-        logger.info("{} request to {}", request.getMethod(), request.getRequestURL().toString());
+        ctx.set("shouldFilter", true);
 
-        Object token = request.getParameter("token");
-        if (token == null) {
-            logger.warn("access token is empty");
+        // 简单鉴权 可自定义鉴权方式
+        HttpServletRequest request = ctx.getRequest();
+        String token = request.getParameter("token");
+        if (StringUtils.isBlank(token)) {
+            logger.warn("access token is blank");
+
+            ctx.set("shouldFilter", false);
             ctx.setSendZuulResponse(false);
-            ctx.setResponseStatusCode(401);
-            return null;
+            ctx.setResponseStatusCode(HttpStatus.UNAUTHORIZED.value());
         }
 
-        logger.info("access token ok");
         return null;
     }
 }
