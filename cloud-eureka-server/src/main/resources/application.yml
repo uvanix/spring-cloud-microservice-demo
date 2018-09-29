@@ -3,31 +3,22 @@ spring:
     name: cloud-eureka-server
   profiles:
     active: dev
-  http:
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
   cloud:
     inetutils:
       use-only-site-local-interfaces: true
 server:
   port: ${PORT:8761}
-  session:
-    timeout: 60
-  tomcat:
-    max-threads: 800
-    uri-encoding: UTF-8
-    basedir: logs
 logging:
   config: classpath:config/logback-config.xml
   file: logs/cloud-eureka-server.log
-security:
-  user:
-    name: user
-    password: password
 management:
-  context-path: /mgmt
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: when_authorized
 info:
   app:
     name: "@project.name@"
@@ -38,6 +29,10 @@ info:
 ---
 spring:
   profiles: dev
+  security:
+    user:
+      name: user
+      password: password
 eureka:
   server:
     enable-self-preservation: false
@@ -45,13 +40,13 @@ eureka:
   instance:
     hostname: localhost
     prefer-ip-address: true
-    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
-    status-page-url: http://${spring.cloud.client.ipAddress}:${server.port}${management.context-path}${endpoints.info.path:/info}
-    health-check-url-path: http://${spring.cloud.client.ipAddress}:${server.port}${management.context-path}${endpoints.info.path:/health}
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    home-page-url-path: http://${spring.cloud.client.ip-address}:${server.port}/actuator
+    status-page-url: ${eureka.instance.home-page-url-path}/info
+    health-check-url-path: ${eureka.instance.home-page-url-path}/health
     metadata-map:
-      management.context-path: ${management.context-path}
-      user.name: ${security.user.name}
-      user.password: ${security.user.password}
+      user.name: ${spring.security.user.name}
+      user.password: ${spring.security.user.password}
     leaseRenewalIntervalInSeconds: 5
     lease-expiration-duration-in-seconds: 15
   client:
@@ -59,71 +54,82 @@ eureka:
     # 因为这是一个单点的EurekaServer，不需要同步其它EurekaServer节点的数据，故设为false
     fetch-registry: false
     # 设置是否将自己作为客户端注册到注册中心（缺省true）
-    # 这里为不需要（查看@EnableEurekaServer注解的源码，会发现它间接用到了@EnableDiscoveryClient）
     register-with-eureka: false
     serviceUrl:
-      defaultZone: http://${security.user.name}:${security.user.password}@${eureka.instance.hostname}:${server.port}/eureka/
+      defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@${eureka.instance.hostname}:${server.port}/eureka/
 
 # 本机集群需配置host 127.0.0.1 peer1 127.0.0.1 peer2 127.0.0.1 peer3
-# 集群节点1 use command to startup [ mvn spring-boot:run -Drun.jvmArguments="-Dspring.profiles.active=peer1" ]
+# 集群节点1 use command to startup [ mvn spring-boot:run -Dspring.profiles.active=peer1 ]
 ---
 spring:
   profiles: peer1
+  security:
+    user:
+      name: user
+      password: password
 server:
   port: ${PORT:8001}
 eureka:
   instance:
     hostname: ${spring.profiles}
     prefer-ip-address: true
-    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
-    status-page-url: http://${spring.cloud.client.ipAddress}:${server.port}${management.context-path}${endpoints.info.path:/info}
-    health-check-url-path: http://${spring.cloud.client.ipAddress}:${server.port}${management.context-path}${endpoints.info.path:/health}
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    home-page-url-path: http://${spring.cloud.client.ip-address}:${server.port}/actuator
+    status-page-url: ${eureka.instance.home-page-url-path}/info
+    health-check-url-path: ${eureka.instance.home-page-url-path}/health
     metadata-map:
-      management.context-path: ${management.context-path}
-      user.name: ${security.user.name}
-      user.password: ${security.user.password}
+      user.name: ${spring.security.user.name}
+      user.password: ${spring.security.user.password}
   client:
     serviceUrl:
-      defaultZone: http://${security.user.name}:${security.user.password}@peer2:8002/eureka/,http://${security.user.name}:${security.user.password}@peer3:8003/eureka/
+      defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@peer2:8002/eureka/,http://${spring.security.user.name}:${spring.security.user.password}@peer3:8003/eureka/
 
-# 集群节点2 use command to startup [ mvn spring-boot:run -Drun.jvmArguments="-Dspring.profiles.active=peer2" ]
+# 集群节点2 use command to startup [ mvn spring-boot:run -Dspring.profiles.active=peer2 ]
 ---
 spring:
   profiles: peer2
+  security:
+    user:
+      name: user
+      password: password
 server:
   port: ${PORT:8002}
 eureka:
   instance:
     hostname: ${spring.profiles}
     prefer-ip-address: true
-    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
-    status-page-url: http://${spring.cloud.client.ipAddress}:${server.port}${management.context-path}${endpoints.info.path:/info}
-    health-check-url-path: http://${spring.cloud.client.ipAddress}:${server.port}${management.context-path}${endpoints.info.path:/health}
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    home-page-url-path: http://${spring.cloud.client.ip-address}:${server.port}/actuator
+    status-page-url: ${eureka.instance.home-page-url-path}/info
+    health-check-url-path: ${eureka.instance.home-page-url-path}/health
     metadata-map:
-      management.context-path: ${management.context-path}
-      user.name: ${security.user.name}
-      user.password: ${security.user.password}
+      user.name: ${spring.security.user.name}
+      user.password: ${spring.security.user.password}
   client:
     serviceUrl:
-      defaultZone: http://${security.user.name}:${security.user.password}@peer1:8001/eureka/,http://${security.user.name}:${security.user.password}@peer3:8003/eureka/
+      defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@peer1:8001/eureka/,http://${spring.security.user.name}:${spring.security.user.password}@peer3:8003/eureka/
 
-# 集群节点3 use command to startup [ mvn spring-boot:run -Drun.jvmArguments="-Dspring.profiles.active=peer3" ]
+# 集群节点3 use command to startup [ mvn spring-boot:run -Dspring.profiles.active=peer3 ]
 ---
 spring:
   profiles: peer3
+  security:
+    user:
+      name: user
+      password: password
 server:
   port: ${PORT:8003}
 eureka:
   instance:
     hostname: ${spring.profiles}
     prefer-ip-address: true
-    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
-    status-page-url: http://${spring.cloud.client.ipAddress}:${server.port}${management.context-path}${endpoints.info.path:/info}
-    health-check-url-path: http://${spring.cloud.client.ipAddress}:${server.port}${management.context-path}${endpoints.info.path:/health}
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    home-page-url-path: http://${spring.cloud.client.ip-address}:${server.port}/actuator
+    status-page-url: ${eureka.instance.home-page-url-path}/info
+    health-check-url-path: ${eureka.instance.home-page-url-path}/health
     metadata-map:
-      management.context-path: ${management.context-path}
-      user.name: ${security.user.name}
-      user.password: ${security.user.password}
+      user.name: ${spring.security.user.name}
+      user.password: ${spring.security.user.password}
   client:
     serviceUrl:
-      defaultZone: http://${security.user.name}:${security.user.password}@peer1:8001/eureka/,http://${security.user.name}:${security.user.password}@peer2:8002/eureka/
+      defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@peer1:8001/eureka/,http://${spring.security.user.name}:${spring.security.user.password}@peer2:8002/eureka/

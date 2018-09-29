@@ -25,9 +25,9 @@ public class AdminServerTest {
 
     @Autowired
     private TestRestTemplate testRestTemplate;
-    @Value("${security.user.name}")
+    @Value("${spring.security.user.name}")
     private String username;
-    @Value("${security.user.password}")
+    @Value("${spring.security.user.password}")
     private String password;
 
     @Test
@@ -40,7 +40,7 @@ public class AdminServerTest {
     @Test
     public void health() {
         ResponseEntity<Map> entity = testRestTemplate.withBasicAuth(username, password)
-                .getForEntity("/mgmt/health", Map.class);
+                .getForEntity("/actuator/health", Map.class);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         logger.info("\nresult: {}", entity.getBody());
     }
